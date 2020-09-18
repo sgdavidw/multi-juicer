@@ -1,0 +1,19 @@
+apiVersion : apps/v1
+kind: Deployment
+metadata:
+  name: sgdavidwmultijuicer 
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: sgdavidwmultijuicer
+  template:
+    metadata:
+      labels:
+        app: sgdavidwmultijuicer 
+    spec:
+      containers:
+        - name: sgdavidwmultijuicer 
+          image: napmultijuiceracr.azurecr.io/sgdavidwmultijuicer
+          ports:
+          - containerPort: 80
