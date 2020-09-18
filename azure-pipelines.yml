@@ -4,13 +4,12 @@
 
 trigger:
 - master
-
 resources:
-- repo: self
-- repo: kubernetes-ingress # The name used to reference this repository in the checkout step
-  type: github
-  endpoint: 'github connection 1'
-  name: 'sgdavidw/kubernetes-ingress'
+  repositories:
+  - repository: kubernetes-ingress # The name used to reference this repository in the checkout step
+    type: github
+    endpoint: 'github connection 1'
+    name: 'sgdavidw/kubernetes-ingress'
 
 
 variables:
