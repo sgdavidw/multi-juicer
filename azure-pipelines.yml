@@ -74,7 +74,13 @@ stages:
       displayName: 'Publish Artifacts: drop'
 
     - checkout: kubernetes-ingress
-    - script: dir $(Build.SourcesDirectory)
+    - script: dir $(Build.SourcesDirectory)/kubernetes-ingress
+    - task: DownloadSecureFile@1
+      displayName: 'Download nginx-repo.key'
+      inputs:
+      secureFile: '$(Parameters.secureFile)'
+    - script: echo $(Build.SourcesDirectory)
+
     - task: Docker@2
       displayName: Build and push an image to container registry
       inputs:
