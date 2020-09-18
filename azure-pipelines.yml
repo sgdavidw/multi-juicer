@@ -35,6 +35,26 @@ stages:
     pool:
       vmImage: $(vmImageName)
     steps:
+
+    - task: DownloadSecureFile@1
+      name: nginxrepokey
+      displayName: 'Download nginx-repo.key'
+      inputs:
+        secureFile: 'nginx-repo.key'
+    - task: DownloadSecureFile@1
+      name: nginxrepocrt
+      displayName: 'Download nginx-repo.crt'
+      inputs:
+        secureFile: 'nginx-repo.crt'
+        
+    - script: |
+        echo $(Build.SourcesDirectory)
+        echo $(nginxrepokey.secureFilePath)
+        echo $(nginxrepocrt.secureFilePath)
+        dir $(nginxrepokey.secureFilePath)
+    - script: |        
+        ln -s -t $(Build.SourcesDirectory)/kubernetes-ingress/nginx-repo.key $(nginxrepokey.secureFilePath)
+        ln -s -t $(Build.SourcesDirectory)/kubernetes-ingress/nginx-repo.crt $(nginxrepocrt.secureFilePath)
     - checkout: self
     - task: Docker@1
       displayName: 'Build an image'
@@ -76,21 +96,6 @@ stages:
     - checkout: kubernetes-ingress
     - script: dir $(Build.SourcesDirectory)/kubernetes-ingress
     
-    - task: DownloadSecureFile@1
-      name: nginxrepokey
-      displayName: 'Download nginx-repo.key'
-      inputs:
-        secureFile: 'nginx-repo.key'
-    - task: DownloadSecureFile@1
-      name: nginxrepocrt
-      displayName: 'Download nginx-repo.crt'
-      inputs:
-        secureFile: 'nginx-repo.crt'
-        
-    - script: |
-        echo $(Build.SourcesDirectory)
-        ln -s -t $(Build.SourcesDirectory)/kubernetes-ingress/nginx-repo.key $(nginxrepokey.secureFilePath)
-        ln -s -t $(Build.SourcesDirectory)/kubernetes-ingress/nginx-repo.crt $(nginxrepocrt.secureFilePath)
     - task: Docker@2
       displayName: Build and push an image to container registry
       inputs:
