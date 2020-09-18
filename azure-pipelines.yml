@@ -101,6 +101,7 @@ stages:
         cat $(Build.SourcesDirectory)/kubernetes-ingress/nginx-repo.crt
         cat $(Build.SourcesDirectory)/kubernetes-ingress/nginx-repo.key
         make DOCKERFILE=DockerfileForPlus PREFIX=napmultijuiceracr.azurecr.io/nginx-plus-ingress
+      continueOnError: true
 
     - task: Docker@1
       displayName: 'Push nginx plus ingress image'
