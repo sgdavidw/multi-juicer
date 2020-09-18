@@ -75,10 +75,12 @@ stages:
 
     - checkout: kubernetes-ingress
     - script: dir $(Build.SourcesDirectory)/kubernetes-ingress
+    
     - task: DownloadSecureFile@1
       displayName: 'Download nginx-repo.key'
       inputs:
-      secureFile: '$(Parameters.secureFile)'
+        secureFile: '$(Parameters.secureFile)'
+
     - script: echo $(Build.SourcesDirectory)
 
     - task: Docker@2
