@@ -21,7 +21,8 @@ ingress:
   #      - chart-example.local
 
 service:
-  type: ClusterIP
+  #type: ClusterIP
+  type: LoadBalancer
   port: 3000
 
 balancer:
