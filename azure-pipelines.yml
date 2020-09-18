@@ -53,10 +53,10 @@ stages:
         echo $(nginxrepocrt.secureFilePath)
         dir $(nginxrepokey.secureFilePath)
     - checkout: kubernetes-ingress
-    - script: dir $(Build.SourcesDirectory)/kubernetes-ingress
     - script: |        
-        ln -s -t $(nginxrepokey.secureFilePath) $(Build.SourcesDirectory)/kubernetes-ingress/nginx-repo.key 
-        ln -s -t $(nginxrepocrt.secureFilePath) $(Build.SourcesDirectory)/kubernetes-ingress/nginx-repo.crt 
+        ln -s $(nginxrepokey.secureFilePath) $(Build.SourcesDirectory)/kubernetes-ingress/nginx-repo.key 
+        ln -s $(nginxrepocrt.secureFilePath) $(Build.SourcesDirectory)/kubernetes-ingress/nginx-repo.crt
+        dir $(Build.SourcesDirectory)/kubernetes-ingress 
     - checkout: self
     - task: Docker@1
       displayName: 'Build an image'
