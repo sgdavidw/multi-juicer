@@ -7,7 +7,7 @@ trigger:
 
 resources:
 - repo: self
-- repository: kubernetes-ingress # The name used to reference this repository in the checkout step
+- repo: kubernetes-ingress # The name used to reference this repository in the checkout step
   type: github
   endpoint: 'github connection 1'
   name: 'sgdavidw/kubernetes-ingress'
