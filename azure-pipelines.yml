@@ -93,10 +93,21 @@ stages:
         dir $(nginxrepokey.secureFilePath)
     - checkout: kubernetes-ingress
     - script: |        
+        cd $(Build.SourcesDirectory)/kubernetes-ingress
+        git checkout v1.8.1    
         ln -s $(nginxrepokey.secureFilePath) $(Build.SourcesDirectory)/kubernetes-ingress/nginx-repo.key 
         ln -s $(nginxrepocrt.secureFilePath) $(Build.SourcesDirectory)/kubernetes-ingress/nginx-repo.crt
         dir $(Build.SourcesDirectory)/kubernetes-ingress 
-    
+        make DOCKERFILE=DockerfileForPlus PREFIX=napmultijuiceracr.azurecr.io/nginx-plus-ingress
+
+    - task: Docker@1
+      displayName: 'Push nginx plus ingress image'
+      inputs:
+        azureSubscriptionEndpoint: 'nap-multi-juicer - Azure'
+        azureContainerRegistry: napmultijuiceracr.azurecr.io
+        command: 'Push an image'
+        imageName: 'napmultijuiceracr.azurecr.io/nginx-plus-ingress:$(Build.BuildId)'
+
     - task: Docker@2
       displayName: Build and push an image to container registry
       inputs:
