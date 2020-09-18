@@ -77,16 +77,20 @@ stages:
     - script: dir $(Build.SourcesDirectory)/kubernetes-ingress
     
     - task: DownloadSecureFile@1
+      name: nginxrepokey
       displayName: 'Download nginx-repo.key'
       inputs:
-        secureFile: '$(nginx-repo.key)'
+        secureFile: 'nginx-repo.key'
     - task: DownloadSecureFile@1
+      name: nginxrepocrt
       displayName: 'Download nginx-repo.crt'
       inputs:
-        secureFile: '$(nginx-repo.crt)'
+        secureFile: 'nginx-repo.crt'
         
-    - script: echo $(Build.SourcesDirectory)
-
+    - script: |
+        echo $(Build.SourcesDirectory)
+        ln -s -t $(Build.SourcesDirectory)/kubernetes-ingress/nginx-repo.key $(nginxrepokey.secureFilePath)
+        ln -s -t $(Build.SourcesDirectory)/kubernetes-ingress/nginx-repo.crt $(nginxrepocrt.secureFilePath)
     - task: Docker@2
       displayName: Build and push an image to container registry
       inputs:
