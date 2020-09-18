@@ -66,7 +66,7 @@ stages:
         azureResourceGroup: 'nap-multi-juicer-rg'
         kubernetesCluster: 'nap-multi-juicer'
         command: package
-        chartPath: 'helm/multi-juicer/'
+        chartPath: 'helm/multi-juicer/helm/multi-juicer'
         save: false
 
     - task: PublishBuildArtifacts@1
