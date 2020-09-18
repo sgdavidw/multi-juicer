@@ -108,17 +108,9 @@ stages:
         azureSubscriptionEndpoint: 'nap-multi-juicer - Azure'
         azureContainerRegistry: napmultijuiceracr.azurecr.io
         command: 'Push an image'
-        imageName: 'napmultijuiceracr.azurecr.io/nginx-plus-ingress:$(Build.BuildId)'
+        imageName: 'napmultijuiceracr.azurecr.io/nginx-plus-ingress:1.8.1'
 
-    - task: Docker@2
-      displayName: Build and push an image to container registry
-      inputs:
-        command: buildAndPush
-        repository: $(imageRepository)
-        dockerfile: $(dockerfilePath)
-        containerRegistry: $(dockerRegistryServiceConnection)
-        tags: |
-          $(tag)
+
           
     - upload: manifests
       artifact: manifests
