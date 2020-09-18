@@ -137,22 +137,51 @@ stages:
       runOnce:
         deploy:
           steps:
-          - task: KubernetesManifest@0
-            displayName: Create imagePullSecret
+          - task: AzureResourceGroupDeployment@2
+            displayName: 'Azure Deployment:Create AKS cluster'
             inputs:
-              action: createSecret
-              secretName: $(imagePullSecret)
-              dockerRegistryEndpoint: $(dockerRegistryServiceConnection)
+              azureSubscription: 'nap-multi-juicer - Azure'
+              resourceGroupName: 'nap-multi-juicer-rg'
+              location: 'East US'
+              templateLocation: 'URL of the file'
+              csmFileLink: 'https://raw.githubusercontent.com/Microsoft/devops-project-samples/ebfc76733eb82e2103b96309e0e6983a69063b9d/armtemplates/kubernetes/aks-template.json'
+              overrideParameters: '-clusterName "nap-multi-juicer" -dnsPrefix "nap-multi-juicer" -appInsightsLocation "East US" -clusterLocation "East US" -servicePrincipalClientId "$(ServicePrincipalId)" -servicePrincipalClientSecret "$(ServicePrincipalKey)" -agentCount 3 -agentVMSize Standard_D2_v2 -kubernetesVersion 1.16.10 -omsLocation "East US" -omsWorkspaceName "3a20"'
+              deploymentOutputs: deploymentOutputs
+
+          #Your build pipeline references an undefined variable named ‘deploymentOutputs’. Create or edit the build pipeline for this YAML file, define the variable on the Variables tab. See https://go.microsoft.com/fwlink/?linkid=865972
+
+          steps:
+          - powershell: |
+            $deploymentOutputs=(ConvertFrom-Json '$(deploymentOutputs)')
+            $applicationRoutingZone=$deploymentOutputs.applicationRoutingZone.value
+            $aiKey=$deploymentOutputs.aiKey.value
+            Write-Host "##vso[task.setvariable variable=applicationRoutingZone;]$applicationRoutingZone"
+            Write-Host "##vso[task.setvariable variable=aiKey;]$aiKey"
+            displayName: 'Extract the ApplicationRoutingZone'
+
               
-          - task: KubernetesManifest@0
-            displayName: Deploy to Kubernetes cluster
+          - task: HelmInstaller@0
+            displayName: 'Install Helm 3.*.*'
             inputs:
-              action: deploy
-              manifests: |
-                $(Pipeline.Workspace)/manifests/deployment.yml
-                $(Pipeline.Workspace)/manifests/service.yml
-              imagePullSecrets: |
-                $(imagePullSecret)
-              containers: |
-                $(containerRegistry)/$(imageRepository):$(tag)
+              helmVersion: 3.0.2
+              checkLatestHelmVersion: false
+              kubectlVersion: 1.10.3
+              checkLatestKubectl: false
+
+          #Your build pipeline references an undefined variable named ‘applicationRoutingZone’. Create or edit the build pipeline for this YAML file, define the variable on the Variables tab. See https://go.microsoft.com/fwlink/?linkid=865972
+
+          steps:
+          - task: HelmDeploy@0
+            displayName: 'Helm upgrade multi-juicer'
+            inputs:
+              azureSubscription: 'nap-multi-juicer - Azure'
+              azureResourceGroup: 'nap-multi-juicer-rg'
+              kubernetesCluster: 'nap-multi-juicer'
+              namespace: dev
+              command: upgrade
+              chartType: FilePath
+              chartPath: '$(System.DefaultWorkingDirectory)/Drop/drop/multi-juicer-3.7.0.tgz'
+              releaseName: azuredevops
+              force: true
+              arguments: '--set image.repository=napmultijuiceracr.azurecr.io/napmultijuicer --set image.tag=$(Build.BuildId) --set ingress.enabled=true --set ingress.hostname=dev-sampleapp.$(applicationRoutingZone)'
 
