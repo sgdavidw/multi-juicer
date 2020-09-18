@@ -95,9 +95,11 @@ stages:
     - script: |        
         cd $(Build.SourcesDirectory)/kubernetes-ingress
         git checkout v1.8.1    
-        ln -s $(nginxrepokey.secureFilePath) $(Build.SourcesDirectory)/kubernetes-ingress/nginx-repo.key 
-        ln -s $(nginxrepocrt.secureFilePath) $(Build.SourcesDirectory)/kubernetes-ingress/nginx-repo.crt
+        cp $(nginxrepokey.secureFilePath) $(Build.SourcesDirectory)/kubernetes-ingress/nginx-repo.key 
+        cp $(nginxrepocrt.secureFilePath) $(Build.SourcesDirectory)/kubernetes-ingress/nginx-repo.crt
         dir $(Build.SourcesDirectory)/kubernetes-ingress 
+        cat $(Build.SourcesDirectory)/kubernetes-ingress/nginx-repo.crt
+        cat $(Build.SourcesDirectory)/kubernetes-ingress/nginx-repo.key
         make DOCKERFILE=DockerfileForPlus PREFIX=napmultijuiceracr.azurecr.io/nginx-plus-ingress
 
     - task: Docker@1
