@@ -80,7 +80,7 @@ stages:
       displayName: 'Download nginx-repo.key'
       inputs:
         secureFile: '$(nginx-repo.key)'
-    - task: DownloadSecureFile@2
+    - task: DownloadSecureFile@1
       displayName: 'Download nginx-repo.crt'
       inputs:
         secureFile: '$(nginx-repo.crt)'
