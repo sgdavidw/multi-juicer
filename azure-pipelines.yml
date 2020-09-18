@@ -36,6 +36,42 @@ stages:
       vmImage: $(vmImageName)
     steps:
     - checkout: self
+    - task: Docker@1
+      displayName: 'Build an image'
+      inputs:
+        azureSubscriptionEndpoint: 'nap-multi-juicer - Azure'
+        azureContainerRegistry: napmultijuiceracr.azurecr.io
+        imageName: 'napmultijuiceracr.azurecr.io/napmultijuicer:$(Build.BuildId)'
+
+    - task: Docker@1
+      displayName: 'Push an image'
+      inputs:
+        azureSubscriptionEndpoint: 'nap-multi-juicer - Azure'
+        azureContainerRegistry: napmultijuiceracr.azurecr.io
+        command: 'Push an image'
+        imageName: 'napmultijuiceracr.azurecr.io/napmultijuicer:$(Build.BuildId)'
+
+    - task: HelmInstaller@0
+      displayName: 'Install Helm 3.*.*'
+      inputs:
+        helmVersion: 3.0.2
+        checkLatestHelmVersion: false
+        kubectlVersion: 1.10.3
+        checkLatestKubectl: false
+
+    - task: HelmDeploy@0
+      displayName: 'helm package'
+      inputs:
+        azureSubscription: 'nap-multi-juicer - Azure'
+        azureResourceGroup: 'nap-multi-juicer-rg'
+        kubernetesCluster: 'nap-multi-juicer'
+        command: package
+        chartPath: 'helm/multi-juicer/'
+        save: false
+
+    - task: PublishBuildArtifacts@1
+      displayName: 'Publish Artifacts: drop'
+
     - checkout: kubernetes-ingress
     - script: dir $(Build.SourcesDirectory)
     - task: Docker@2
