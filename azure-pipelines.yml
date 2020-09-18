@@ -76,8 +76,7 @@ stages:
 
     - task: PublishBuildArtifacts@1
       displayName: 'Publish Artifacts: drop'
-    - upload: manifests
-      artifact: manifests
+
     - task: DownloadSecureFile@1
       name: nginxrepokey
       displayName: 'Download nginx-repo.key'
@@ -115,6 +114,16 @@ stages:
         command: 'Push an image'
         imageName: 'napmultijuiceracr.azurecr.io/nginx-plus-ingress:1.8.1'
 
+
+    - task: HelmDeploy@0
+      displayName: 'helm package nginx ingress'
+      inputs:
+        azureSubscription: 'nap-multi-juicer - Azure'
+        azureResourceGroup: 'nap-multi-juicer-rg'
+        kubernetesCluster: 'nap-multi-juicer'
+        command: package
+        chartPath: '$(Build.SourcesDirectory)/kubernetes-ingress/deployments/helm-chart'
+        save: false
 
 - stage: Deploy
   displayName: Deploy stage
