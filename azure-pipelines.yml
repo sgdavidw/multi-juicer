@@ -59,7 +59,7 @@ stages:
         kubectlVersion: 1.10.3
         checkLatestKubectl: false
     - script: dir $(Build.SourcesDirectory)
-    - script: dir $(Build.SourcesDirectory)/helm/multi-juicer
+    - script: dir $(Build.SourcesDirectory)/multi-juicer/helm/multi-juicer
     - task: HelmDeploy@0
       displayName: 'helm package'
       inputs:
@@ -67,7 +67,7 @@ stages:
         azureResourceGroup: 'nap-multi-juicer-rg'
         kubernetesCluster: 'nap-multi-juicer'
         command: package
-        chartPath: '$(Build.SourcesDirectory)/helm/multi-juicer'
+        chartPath: '$(Build.SourcesDirectory)/multi-juicer/helm/multi-juicer'
         save: false
 
     - task: PublishBuildArtifacts@1
