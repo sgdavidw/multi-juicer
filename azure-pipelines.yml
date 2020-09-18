@@ -60,8 +60,10 @@ stages:
         checkLatestHelmVersion: false
         kubectlVersion: 1.10.3
         checkLatestKubectl: false
-    - script: dir $(Build.SourcesDirectory)
-    - script: dir $(Build.SourcesDirectory)/multi-juicer/helm/multi-juicer
+    - script: |
+        dir $(Build.SourcesDirectory)
+        dir $(Build.SourcesDirectory)/multi-juicer/helm/multi-juicer
+        dir $(Build.ArtifactStagingDirectory)
     - task: HelmDeploy@0
       displayName: 'helm package'
       inputs:
@@ -74,7 +76,8 @@ stages:
 
     - task: PublishBuildArtifacts@1
       displayName: 'Publish Artifacts: drop'
-
+    - upload: manifests
+      artifact: manifests
     - task: DownloadSecureFile@1
       name: nginxrepokey
       displayName: 'Download nginx-repo.key'
@@ -88,6 +91,7 @@ stages:
         
     - script: |
         echo $(Build.SourcesDirectory)
+        echo $(Build.ArtifactStagingDirectory)
         echo $(nginxrepokey.secureFilePath)
         echo $(nginxrepocrt.secureFilePath)
         dir $(nginxrepokey.secureFilePath)
@@ -111,10 +115,6 @@ stages:
         command: 'Push an image'
         imageName: 'napmultijuiceracr.azurecr.io/nginx-plus-ingress:1.8.1'
 
-
-          
-    - upload: manifests
-      artifact: manifests
 
 - stage: Deploy
   displayName: Deploy stage
