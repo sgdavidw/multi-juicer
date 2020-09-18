@@ -79,8 +79,12 @@ stages:
     - task: DownloadSecureFile@1
       displayName: 'Download nginx-repo.key'
       inputs:
-        secureFile: '$(Parameters.secureFile)'
-
+        secureFile: '$(nginx-repo.key)'
+    - task: DownloadSecureFile@2
+      displayName: 'Download nginx-repo.crt'
+      inputs:
+        secureFile: '$(nginx-repo.crt)'
+        
     - script: echo $(Build.SourcesDirectory)
 
     - task: Docker@2
