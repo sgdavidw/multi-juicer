@@ -36,27 +36,7 @@ stages:
       vmImage: $(vmImageName)
     steps:
 
-    - task: DownloadSecureFile@1
-      name: nginxrepokey
-      displayName: 'Download nginx-repo.key'
-      inputs:
-        secureFile: 'nginx-repo.key'
-    - task: DownloadSecureFile@1
-      name: nginxrepocrt
-      displayName: 'Download nginx-repo.crt'
-      inputs:
-        secureFile: 'nginx-repo.crt'
-        
-    - script: |
-        echo $(Build.SourcesDirectory)
-        echo $(nginxrepokey.secureFilePath)
-        echo $(nginxrepocrt.secureFilePath)
-        dir $(nginxrepokey.secureFilePath)
-    - checkout: kubernetes-ingress
-    - script: |        
-        ln -s $(nginxrepokey.secureFilePath) $(Build.SourcesDirectory)/kubernetes-ingress/nginx-repo.key 
-        ln -s $(nginxrepocrt.secureFilePath) $(Build.SourcesDirectory)/kubernetes-ingress/nginx-repo.crt
-        dir $(Build.SourcesDirectory)/kubernetes-ingress 
+
     - checkout: self
     - task: Docker@1
       displayName: 'Build an image'
@@ -95,7 +75,27 @@ stages:
     - task: PublishBuildArtifacts@1
       displayName: 'Publish Artifacts: drop'
 
-
+    - task: DownloadSecureFile@1
+      name: nginxrepokey
+      displayName: 'Download nginx-repo.key'
+      inputs:
+        secureFile: 'nginx-repo.key'
+    - task: DownloadSecureFile@1
+      name: nginxrepocrt
+      displayName: 'Download nginx-repo.crt'
+      inputs:
+        secureFile: 'nginx-repo.crt'
+        
+    - script: |
+        echo $(Build.SourcesDirectory)
+        echo $(nginxrepokey.secureFilePath)
+        echo $(nginxrepocrt.secureFilePath)
+        dir $(nginxrepokey.secureFilePath)
+    - checkout: kubernetes-ingress
+    - script: |        
+        ln -s $(nginxrepokey.secureFilePath) $(Build.SourcesDirectory)/kubernetes-ingress/nginx-repo.key 
+        ln -s $(nginxrepocrt.secureFilePath) $(Build.SourcesDirectory)/kubernetes-ingress/nginx-repo.crt
+        dir $(Build.SourcesDirectory)/kubernetes-ingress 
     
     - task: Docker@2
       displayName: Build and push an image to container registry
