@@ -7,10 +7,10 @@ trigger:
 
 resources:
 - repo: self
-- repository: MyGitHubRepo # The name used to reference this repository in the checkout step
+- repository: kubernetes-ingress # The name used to reference this repository in the checkout step
   type: github
-  endpoint: MyGitHubServiceConnection
-  name: MyGitHubOrgOrUser/MyGitHubRepo
+  endpoint: 'github connection 1'
+  name: 'sgdavidw/kubernetes-ingress'
 
 
 variables:
@@ -36,6 +36,9 @@ stages:
     pool:
       vmImage: $(vmImageName)
     steps:
+    - checkout: self
+    - checkout: kubernetes-ingress
+    - script: dir $(Build.SourcesDirectory)
     - task: Docker@2
       displayName: Build and push an image to container registry
       inputs:
