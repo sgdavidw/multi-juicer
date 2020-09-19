@@ -98,7 +98,8 @@ stages:
         cp $(nginxrepokey.secureFilePath) $(Build.SourcesDirectory)/kubernetes-ingress/nginx-repo.key 
         cp $(nginxrepocrt.secureFilePath) $(Build.SourcesDirectory)/kubernetes-ingress/nginx-repo.crt
         dir $(Build.SourcesDirectory)/kubernetes-ingress 
-        make DOCKERFILE=DockerfileForPlus PREFIX=napmultijuiceracr.azurecr.io/nginx-plus-ingress
+        #make DOCKERFILE=DockerfileForPlus PREFIX=napmultijuiceracr.azurecr.io/nginx-plus-ingress
+        make DOCKERFILE=appprotect/DockerfileWithAppProtectForPlus PREFIX=napmultijuiceracr.azurecr.io/nginx-plus-ingress
       continueOnError: true
 
     - task: Docker@1
