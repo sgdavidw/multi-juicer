@@ -15,6 +15,7 @@ resources:
 variables:
 
   # Container registry service connection established during pipeline creation
+  # Notes: this ACR has been deleted after I finished the test. :-)
   dockerRegistryServiceConnection: '7b4f56f6-2202-4be1-95b1-880f0f1ecf94'
   imageRepository: 'sgdavidwmultijuicer'
   containerRegistry: 'napmultijuiceracr.azurecr.io'
